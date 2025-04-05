@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Logo from '../assets/logo.png'
 import { Link, useNavigate } from "react-router-dom";
 import { validEmail } from '../utils/validator';
-import { KOYEB_BACKEND } from '../assets/options';
+import { BACKEND_URL } from '../assets/options';
 
 function Register() {
 
@@ -50,7 +50,7 @@ function Register() {
 
     async function createUser() {
       const {email, password} = user;
-      const response = await fetch(`${KOYEB_BACKEND}/api/auth/register`, {
+      const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
         method: 'POST',
         credentials: 'include',
         headers: {

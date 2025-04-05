@@ -5,7 +5,7 @@ import { validEmail } from '../utils/validator';
 import { useDispatch } from "react-redux";
 import { login } from "../store/slices/userSlice";
 import { refreshCart } from '../store/slices/cartSlices';
-import { KOYEB_BACKEND } from '../assets/options';
+import { BACKEND_URL } from '../assets/options';
 
 function Login() {
 
@@ -36,7 +36,7 @@ function Login() {
 
     async function loginUser() {
       const { email, password } = user;
-      const response = await fetch(`${KOYEB_BACKEND}/api/auth/login`, {
+      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {

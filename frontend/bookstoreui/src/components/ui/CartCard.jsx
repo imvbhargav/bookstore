@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { addItem, removeItem, updateItemQuantity } from "../../store/slices/cartSlices";
-import { KOYEB_BACKEND } from "../../assets/options";
+import { BACKEND_URL } from "../../assets/options";
 
 function CartCard({ book = null }) {
 
@@ -29,7 +29,7 @@ function CartCard({ book = null }) {
 
   const checkStock = () => {
     async function check() {
-      const response = await fetch(`${KOYEB_BACKEND}/api/book/get/${book.slug}`, {
+      const response = await fetch(`${BACKEND_URL}/api/book/get/${book.slug}`, {
         method: 'GET',
         credentials: 'include'
       });

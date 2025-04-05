@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "./ui/Header";
 import { Link } from "react-router-dom";
 import OrderCard from "./ui/OrderCard";
-import { KOYEB_BACKEND } from "../assets/options";
+import { BACKEND_URL } from "../assets/options";
 
 function Orders() {
 
@@ -13,7 +13,7 @@ function Orders() {
   useEffect(() => {
     const getOrders = async getOrders => {
       setLoading(true);
-      const response = await fetch(`${KOYEB_BACKEND}/api/order/get`, {
+      const response = await fetch(`${BACKEND_URL}/api/order/get`, {
         method: 'GET',
         credentials: 'include',
       });
