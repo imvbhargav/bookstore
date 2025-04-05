@@ -1,0 +1,40 @@
+* {
+  font-family: 'Crimson Pro', serif;
+}
+
+.font-old-standard {
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.checkmark path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: draw  0.5s ease-out forwards;
+  animation-delay: 0.15s;
+}
+
+.grow_box {
+  width: 0%;
+  animation: grow 0.15s ease-out forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes grow {
+  to {
+    width: 84%;
+  }
+}
