@@ -4,8 +4,6 @@ import { BACKEND_URL } from '../../assets/options';
 
 function BookForm() {
 
-  const newBook = { title: '', author: '', genre: '', description: '', price: '', stock: '' };
-
   const navigate = useNavigate();
   const { slug } = useParams();
 

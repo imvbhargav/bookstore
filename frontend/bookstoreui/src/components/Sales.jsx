@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import Header from './ui/Header';
-import OrderCard from "./ui/OrderCard";
 import SaleCard from "./ui/SaleCard";
 import { BACKEND_URL } from "../assets/options";
 import Spinner from "./ui/Spinner";
