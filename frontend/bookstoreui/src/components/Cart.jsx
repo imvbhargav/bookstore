@@ -39,7 +39,7 @@ function Cart() {
             </div>
           </div>
         </div>
-        <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           { cartItems.map(item =>
             <CartCard key={item.slug} book={item} />
           )}

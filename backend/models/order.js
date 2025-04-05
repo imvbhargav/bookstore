@@ -37,6 +37,13 @@ const orderSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 }, { timestamps: true });
 
+// Indexes for find, We find the orders based on buyer and sales based on seller.
+orderSchema.index({ buyer: 1 });
+orderSchema.index({ 'book.seller': 1 });
+
+// Indexes for update, we update the status based on slug, seller and _id.
+orderSchema.index({ _id: 1, 'book.seller': 1, 'book.slug': 1 });
+
 const Order = mongoose.model('Order', orderSchema);
 
 export default Order;

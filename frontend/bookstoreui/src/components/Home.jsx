@@ -3,6 +3,7 @@ import BookCard from "./ui/BookCard";
 import Header from "./ui/Header";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../assets/options";
+import Spinner from "./ui/Spinner";
 
 const LIMIT_PER_PAGE = 12;
 
@@ -85,8 +86,9 @@ function Home() {
         </div>
         { loading
           ?
-          <div className="font-bold text-xl text-center">
-            <h1>Loading Books...</h1>
+          <div className="font-bold text-xl text-center mt-6 flex flex-col justify-center items-center">
+            <Spinner />
+            <h1 className="mt-6">Loading Books...</h1>
           </div>
           :
           <>

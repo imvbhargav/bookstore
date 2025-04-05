@@ -11,6 +11,7 @@ import Checkout from "./components/Checkout";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthProvider from './components/middleware/AuthProvider';
 import { AuthMiddleware, LoginMiddleware, RoleMiddleware } from "./components/middleware/Middleware";
+import NotFound from './components/NotFound';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
           <Route path="/admin/sales" element={<RoleMiddleware Component={Sales} />} />
           <Route path="/admin/book/new" element={<RoleMiddleware Component={AddBook} />} />
           <Route path="/admin/book/edit/:slug" element={<RoleMiddleware Component={AddBook} />} />
-          <Route path="*" element={<></>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

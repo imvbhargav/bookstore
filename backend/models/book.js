@@ -38,6 +38,13 @@ bookSchema.pre('save', async function (next) {
   next();
 });
 
+// Index for seller, We find books based on seller for admin listing.
+bookSchema.index({ seller: 1 });
+
+// Index for slug and stock, We find the books based on stock available
+// we use this for validating if the book is in stock for ordering.
+bookSchema.index({ slug: 1, stock: 1 });
+
 const Book = mongoose.model('Book', bookSchema);
 
 export default Book;

@@ -3,6 +3,7 @@ import Header from './ui/Header';
 import OrderCard from "./ui/OrderCard";
 import SaleCard from "./ui/SaleCard";
 import { BACKEND_URL } from "../assets/options";
+import Spinner from "./ui/Spinner";
 
 function Sales() {
 
@@ -95,7 +96,7 @@ function Sales() {
               </div>
             </div>
           </div>
-          <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           { sales.map(sale => (
             <SaleCard
               key={`${sale._id}${sale.book.slug}`}
@@ -106,8 +107,9 @@ function Sales() {
           </div>
         </>
         :
-        <div className="font-bold text-xl text-center">
-          <h1>Loading Orders...</h1>
+        <div className="font-bold text-xl text-center mt-6 flex flex-col items-center justify-between">
+          <Spinner />
+          <h1 className="mt-6">Loading Sales...</h1>
         </div>
       }
       </main>

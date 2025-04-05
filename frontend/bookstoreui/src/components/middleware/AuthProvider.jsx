@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { login, logout } from '../../store/slices/userSlice';
 import { BACKEND_URL } from '../../assets/options';
+import Loader from '../ui/Loader';
 
 const AuthProvider = ({ children }) => {
 
@@ -32,7 +33,7 @@ const AuthProvider = ({ children }) => {
     checkLogin();
   }, [location.pathname]);
 
-  if (!authChecked) return <div>Loading...</div>;
+  if (!authChecked) return <Loader />;
 
   return children;
 };

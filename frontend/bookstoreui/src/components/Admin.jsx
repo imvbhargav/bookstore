@@ -3,6 +3,8 @@ import AdminBookCard from "./ui/AdminBookCard";
 import Header from "./ui/Header";
 import { useCallback, useEffect, useState } from "react";
 import { BACKEND_URL, LIMIT_PER_PAGE } from "../assets/options";
+import Loader from "./ui/Loader";
+import Spinner from "./ui/Spinner";
 
 function Admin() {
   const [ page, setPage ] = useState(1);
@@ -69,7 +71,7 @@ function Admin() {
       { !loading
         ?
         <>
-          <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {books?.map((book) => (
             <AdminBookCard key={book.slug} book={book} refresh={refresh} />
           ))}
@@ -85,8 +87,9 @@ function Admin() {
           </div>
         </>
         :
-        <div className="text-center font-medium">
-          <h1 className="text-md sm:text-xl">Loading...</h1>
+        <div className="text-center mt-6 font-medium flex flex-col justify-center items-center">
+          <Spinner />
+          <h1 className="text-md sm:text-xl mt-6">Loading Books...</h1>
         </div>
       }
     </>

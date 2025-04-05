@@ -3,6 +3,7 @@ import Header from "./ui/Header";
 import { Link } from "react-router-dom";
 import OrderCard from "./ui/OrderCard";
 import { BACKEND_URL } from "../assets/options";
+import Spinner from "./ui/Spinner";
 
 function Orders() {
 
@@ -77,8 +78,9 @@ function Orders() {
           </div>
         </>
         :
-        <div className="font-bold text-xl text-center">
-          <h1>Loading Orders...</h1>
+        <div className="font-bold text-xl text-center flex flex-col justify-center items-center">
+          <Spinner />
+          <h1 className="mt-6">Loading Orders...</h1>
         </div>
       }
       </main>
