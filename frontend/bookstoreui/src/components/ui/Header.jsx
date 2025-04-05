@@ -3,6 +3,7 @@ import Logo from '../../assets/logo.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/userSlice';
 import { refreshCart } from '../../store/slices/cartSlices';
+import { KOYEB_BACKEND } from '../../assets/options';
 
 function Header() {
 
@@ -12,7 +13,7 @@ function Header() {
   const { isLoggedIn, isAdmin } = useSelector(state => state.user);
 
   const logoutUser = async () => {
-    const response = await fetch('http://localhost:5000/api/auth/logout', {
+    const response = await fetch(`${KOYEB_BACKEND}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: {

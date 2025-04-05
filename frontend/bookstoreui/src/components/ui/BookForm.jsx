@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { KOYEB_BACKEND } from '../../assets/options';
 
 function BookForm() {
 
@@ -52,7 +53,7 @@ function BookForm() {
         formData.append("slug", bookSlug);
       }
 
-      const response = await fetch('http://localhost:5000/api/book/add', {
+      const response = await fetch(`${KOYEB_BACKEND}/api/book/add`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -87,7 +88,7 @@ function BookForm() {
 
     const getBook = async () => {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/book/get/${slug}`, {
+      const response = await fetch(`${KOYEB_BACKEND}/api/book/get/${slug}`, {
         method: 'GET',
         credentials: 'include',
       });

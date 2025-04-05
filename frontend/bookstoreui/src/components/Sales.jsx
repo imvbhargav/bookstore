@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Header from './ui/Header';
 import OrderCard from "./ui/OrderCard";
 import SaleCard from "./ui/SaleCard";
+import { KOYEB_BACKEND } from "../assets/options";
 
 function Sales() {
 
@@ -12,7 +13,7 @@ function Sales() {
   useEffect(() => {
     async function fetchSales() {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/order/get/sales', {
+      const response = await fetch(`${KOYEB_BACKEND}/api/order/get/sales`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -42,7 +43,7 @@ function Sales() {
     const updateDBStatus = async() => {
       const currentSales = sales;
 
-      const response = await fetch('http://localhost:5000/api/order/update', {
+      const response = await fetch(`${KOYEB_BACKEND}/api/order/update`, {
         method: 'PUT',
         credentials: 'include',
         headers: {

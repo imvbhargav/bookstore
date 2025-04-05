@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import AdminBookCard from "./ui/AdminBookCard";
 import Header from "./ui/Header";
 import { useCallback, useEffect, useState } from "react";
-import { LIMIT_PER_PAGE } from "../assets/options";
+import { KOYEB_BACKEND, LIMIT_PER_PAGE } from "../assets/options";
 
 function Admin() {
   const [ page, setPage ] = useState(1);
@@ -15,7 +15,7 @@ function Admin() {
     async function getBooks() {
       setLoading(true);
       const offset = (page - 1) * LIMIT_PER_PAGE;
-      const response = await fetch(`http://localhost:5000/api/book/seller/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`, {
+      const response = await fetch(`${KOYEB_BACKEND}/api/book/seller/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`, {
         method: 'GET',
         credentials: 'include',
       });

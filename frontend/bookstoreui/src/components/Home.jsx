@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import BookCard from "./ui/BookCard";
 import Header from "./ui/Header";
 import { useEffect, useState } from "react";
+import { KOYEB_BACKEND } from "../assets/options";
 
 const LIMIT_PER_PAGE = 12;
 
@@ -19,7 +20,7 @@ function Home() {
     async function getBooks() {
       setLoading(true);
       const offset = (page - 1) * LIMIT_PER_PAGE;
-      const response = await fetch(`http://localhost:5000/api/book/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`, {
+      const response = await fetch(`${KOYEB_BACKEND}/api/book/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`, {
         method: 'GET',
         credentials: 'include',
       });

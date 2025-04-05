@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { KOYEB_BACKEND } from "../../assets/options";
 
 function AdminBookCard({ book = null, refresh }) {
 
@@ -9,7 +10,7 @@ function AdminBookCard({ book = null, refresh }) {
 
   function deleteBook() {
     async function deleteBySlug() {
-      const response = await fetch(`http://localhost:5000/api/book/${book.slug}`, {
+      const response = await fetch(`${KOYEB_BACKEND}/api/book/${book.slug}`, {
         method: 'DELETE',
         credentials: 'include'
       });

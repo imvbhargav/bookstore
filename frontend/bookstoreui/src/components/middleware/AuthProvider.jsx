@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { login, logout } from '../../store/slices/userSlice';
+import { KOYEB_BACKEND } from '../../assets/options';
 
 const AuthProvider = ({ children }) => {
 
@@ -14,7 +15,7 @@ const AuthProvider = ({ children }) => {
       setAuthChecked(false);
       try {
         console.log("Fetching again");
-        const res = await fetch('http://localhost:5000/api/auth/me', {
+        const res = await fetch(`${KOYEB_BACKEND}/api/auth/me`, {
           credentials: 'include',
         });
 

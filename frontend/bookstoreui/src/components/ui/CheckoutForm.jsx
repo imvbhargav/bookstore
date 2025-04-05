@@ -4,6 +4,7 @@ import CheckoutDetails from "./CheckoutDetails";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
 import { selectCartItems, selectCartTotalItems, selectCartTotalPrice } from "../../store/slices/cartSlices";
+import { KOYEB_BACKEND } from "../../assets/options";
 
 function CheckoutForm({ failure, checkoutSuccess, paymentProcessing, handleFailure }) {
 
@@ -62,7 +63,7 @@ function CheckoutForm({ failure, checkoutSuccess, paymentProcessing, handleFailu
     });
 
     async function submitDetails() {
-      const response = await fetch('http://localhost:5000/api/order/checkout', {
+      const response = await fetch(`${KOYEB_BACKEND}/api/order/checkout`, {
         method: 'POST',
         credentials: 'include',
         headers: {
