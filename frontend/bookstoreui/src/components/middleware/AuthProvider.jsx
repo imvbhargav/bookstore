@@ -14,8 +14,8 @@ const AuthProvider = ({ children }) => {
     const checkLogin = async () => {
       setAuthChecked(false);
       try {
-        console.log("Fetching again");
         const res = await fetch(`${BACKEND_URL}/api/auth/me`, {
+          method: 'GET',
           credentials: 'include',
         });
 
