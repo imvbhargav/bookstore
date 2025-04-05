@@ -26,8 +26,8 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 app.use(cors({
-    origin: process.env.LIVE_URL??"http://localhost:5173", // Adjust to frontend URL
-    credentials: true, // Allow sending cookies
+    origin: '*',
+    credentials: true,
   })
 );
 
