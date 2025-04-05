@@ -43,4 +43,11 @@ async function getBookBySlug(slug) {
   return book;
 }
 
-export { addBook, updateBook, deleteBook, getBooks, getSellerBooks, getBookBySlug };
+async function getManyBooksBySlug(items) {
+  const books = await Book.find({
+      slug: { $in: items }
+   });
+   return books;
+}
+
+export { addBook, updateBook, deleteBook, getBooks, getSellerBooks, getBookBySlug, getManyBooksBySlug };

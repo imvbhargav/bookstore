@@ -12,6 +12,7 @@ function Register() {
   const [ isAdmin, setIsAdmin ] = useState(false);
   const [ repeat, setRepeat ] = useState('');
   const [ error, setError ] = useState('');
+  const [ loading, setLoading ] = useState(false);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -49,6 +50,7 @@ function Register() {
     }
 
     async function createUser() {
+      setLoading(true);
       const {email, password} = user;
       const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
         method: 'POST',
@@ -63,6 +65,7 @@ function Register() {
 
       const data = await response.json();
       alert(data.message);
+      setLoading(false);
       navigate("/login");
     }
 
@@ -145,9 +148,10 @@ function Register() {
           </div>
           <p className="text-sm text-center text-red-500 min-h-6">{error}</p>
           <button
-            className="py-2 px-4 bg-green-600 rounded-md font-bold text-white hover:bg-green-800 transition-colors cursor-pointer"
+            className="py-2 px-4 bg-green-600 rounded-md font-bold text-white hover:bg-green-800 transition-colors cursor-pointer disabled:bg-black disabled:cursor-auto"
+            disabled={loading}
             onClick={handleRegister}
-          >Register</button>
+          >{loading ? "Registering..." : "Register"}</button>
           <span>
             <Link to="/login" className="underline text-blue-500 hover:text-pink-500">Login</Link>
           </span>

@@ -14,6 +14,7 @@ function Login() {
 
   const [ user, setUser ] = useState({email: '', password: ''});
   const [ error, setError ] = useState('');
+  const [ loading, setLoading ] = useState(false);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -35,6 +36,7 @@ function Login() {
     }
 
     async function loginUser() {
+      setLoading(true);
       const { email, password } = user;
       const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
@@ -48,12 +50,14 @@ function Login() {
       });
 
       if (!response.ok) {
+        setLoading(false);
         setError("Invalid credentials!");
         return;
       };
       const data = await response.json();
       dispatch(login({isAdmin: data.isAdmin, email: data.email}));
       dispatch(refreshCart());
+      setLoading(false);
       navigate("/");
     }
 
@@ -112,9 +116,10 @@ function Login() {
           </div>
           <p className="text-sm text-center text-red-500 min-h-6">{error}</p>
           <button
-            className="py-2 px-4 bg-green-600 rounded-md font-bold text-white hover:bg-green-800 transition-colors cursor-pointer"
+            className="py-2 px-4 bg-green-600 rounded-md font-bold text-white hover:bg-green-800 transition-colors cursor-pointer disabled:bg-black disabled:cursor-auto"
+            disabled={loading}
             onClick={handleLogin}
-          >Login</button>
+          >{loading ? "Logging In..." :"Login"}</button>
           <span>
             <Link to="/register" className="underline text-blue-500 hover:text-pink-500">Register</Link>
           </span>

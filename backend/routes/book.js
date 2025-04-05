@@ -2,9 +2,9 @@ import multer from "multer";
 import dotenv from "dotenv";
 import express from "express";
 import { v2 as cloudinary } from "cloudinary";
-import { validateIsAdmin } from "../middleware/auth.js";
+import { validateIsAdmin, validateLogin } from "../middleware/auth.js";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import {  addBook, deleteBook, getBookBySlug, getBooks, getSellerBooks, updateBook } from "../utils/book.js";
+import {  addBook, deleteBook, getBookBySlug, getBooks, getManyBooksBySlug, getSellerBooks, updateBook } from "../utils/book.js";
 
 dotenv.config();
 const router = express.Router();
@@ -93,6 +93,17 @@ router.delete('/:slug', async (req, res) => {
   try {
     await deleteBook(slug);
     return res.status(204).json({ book, message: `Book ${slug} deleted!` });
+  } catch (err) {
+    return res.status(500).json({error: err.message});
+  }
+})
+
+router.post('/cart', validateLogin, async (req, res) => {
+  const { items } = req.body;
+
+  try {
+    const books = await getManyBooksBySlug(items);
+    return res.status(200).json({ books, message: 'Books fetched deleted!' });
   } catch (err) {
     return res.status(500).json({error: err.message});
   }

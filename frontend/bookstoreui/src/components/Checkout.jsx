@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { clearCart, selectCartTotalItems, selectCartTotalPrice } from "../store/slices/cartSlices";
+import { clearCart, selectCartTotalItems } from "../store/slices/cartSlices";
 import CheckoutForm from "./ui/CheckoutForm";
 import Header from './ui/Header'
 import ProcessPayment from "./ui/ProcessPayment";
 import PaymentSuccess from "./ui/PaymentSucess";
 import CheckoutFail from "./ui/CheckoutFail";
+import { selectFullCartTotalPrice } from "../store/slices/fullCartSlices";
 
 function Checkout() {
 
@@ -14,7 +15,7 @@ function Checkout() {
 
   const dispatch = useDispatch();
   const totalItems = useSelector(selectCartTotalItems);
-  const totalPrice = useSelector(selectCartTotalPrice);
+  const totalPrice = useSelector(selectFullCartTotalPrice);
 
   const [ success, setSuccess ] = useState(false);
   const [ processing, setProcessing ] = useState(false);

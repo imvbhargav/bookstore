@@ -3,14 +3,15 @@ import UserInput from "./UserInput";
 import CheckoutDetails from "./CheckoutDetails";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
-import { selectCartItems, selectCartTotalItems, selectCartTotalPrice } from "../../store/slices/cartSlices";
+import { selectCartItems, selectCartTotalItems } from "../../store/slices/cartSlices";
 import { BACKEND_URL } from "../../assets/options";
+import { selectFullCartTotalPrice } from "../../store/slices/fullCartSlices";
 
 function CheckoutForm({ failure, checkoutSuccess, paymentProcessing, handleFailure }) {
 
   const cartItems = useSelector(selectCartItems);
   const totalItems = useSelector(selectCartTotalItems);
-  const totalItemsPrice = useSelector(selectCartTotalPrice);
+  const totalItemsPrice = useSelector(selectFullCartTotalPrice);
 
   const [ allowSubmit, setAllowSubmit ] = useState(false);
   const [ cardDetails, setCardDetails ] = useState({cardno: '', cvv: '', expiry: ''});
@@ -122,7 +123,7 @@ function CheckoutForm({ failure, checkoutSuccess, paymentProcessing, handleFailu
         <p className="text-sm text-red-600 font-medium h-8">{failure.reason}</p>
         <button
           className="mb-2 bg-green-500 rounded-md px-4 py-2 border-2 border-black hover:bg-green-600 disabled:bg-black disabled:hover:scale-100 disabled:cursor-auto transition-all hover:scale-105 cursor-pointer text-white"
-          disabled={!allowSubmit}
+          disabled={!allowSubmit && totalItemsPrice > 0}
           onClick={handleSubmit}
         >Process Payment</button>
       </div>

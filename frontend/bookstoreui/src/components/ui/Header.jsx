@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/userSlice';
 import { refreshCart } from '../../store/slices/cartSlices';
 import { BACKEND_URL } from '../../assets/options';
+import { useState } from 'react';
 
 function Header() {
 
@@ -12,7 +13,10 @@ function Header() {
   const dispatch = useDispatch();
   const { isLoggedIn, isAdmin } = useSelector(state => state.user);
 
+  const [ loading, setLoading ] = useState(false);
+
   const logoutUser = async () => {
+    setLoading(true);
     const response = await fetch(`${BACKEND_URL}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
@@ -24,6 +28,7 @@ function Header() {
     if (!response.ok) return;
     const data = await response.json();
     alert(data.message);
+    setLoading(false);
     dispatch(logout());
     dispatch(refreshCart());
   }
@@ -44,10 +49,11 @@ function Header() {
           { isLoggedIn
           ?
             <button
-              className="text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2 bg-red-500 text-white rounded-md font-bold hover:bg-red-600 transition-colors cursor-pointer border-2 border-red-500"
+              className="text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2 bg-red-500 text-white rounded-md font-bold hover:bg-red-600 transition-colors cursor-pointer border-2 border-red-500 disabled:bg-black disabled:cursor-auto"
+              disabled={loading}
               onClick={logoutUser}
             >
-              Logout
+              { loading ? "Loggin Out..." : "Logout" }
             </button>
           :
             <>

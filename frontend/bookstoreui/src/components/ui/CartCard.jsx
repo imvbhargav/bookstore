@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
-import { addItem, removeItem, updateItemQuantity } from "../../store/slices/cartSlices";
+import { removeItem, updateItemQuantity } from "../../store/slices/cartSlices";
 import { BACKEND_URL } from "../../assets/options";
+import { removeFullItem, updateFullItemQuantity } from "../../store/slices/fullCartSlices";
 
 function CartCard({ book = null }) {
 
@@ -12,14 +13,17 @@ function CartCard({ book = null }) {
   }
 
   const removeFromCart = () => {
+    dispatch(removeFullItem(book.slug));
     dispatch(removeItem(book.slug));
   }
 
   const decreaseQuantity = () => {
+    dispatch(updateFullItemQuantity({ slug: book.slug, type: 'decrement' }));
     dispatch(updateItemQuantity({ slug: book.slug, type: 'decrement' }));
   }
 
   const increaseQuantity = () => {
+    dispatch(updateFullItemQuantity({ slug: book.slug, type: 'increment' }));
     dispatch(updateItemQuantity({ slug: book.slug, type: 'increment' }));
   }
 
