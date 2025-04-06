@@ -44,6 +44,10 @@ function CheckoutForm({ failure, checkoutSuccess, paymentProcessing, handleFailu
       }
     } else if (name === 'contactno') {
       if (value.length > 10) return;
+      if (isNaN(parseInt(value[value.length - 1]))) {
+        if (value.length > 0)
+          return;
+      }
     }
 
     setDeliveryDetails({ ...deliveryDetails, [name]: value });
