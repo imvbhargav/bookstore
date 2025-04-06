@@ -99,7 +99,7 @@ router.delete('/:slug', async (req, res) => {
   }
 })
 
-router.post('/cart', validateLogin, async (req, res) => {
+router.post('/cart', async (req, res) => {
   const { items } = req.body;
 
   try {
