@@ -54,7 +54,7 @@ function Cart() {
       }
     }
 
-    getFullCartDetails();
+    if ( items.length > 0 ) getFullCartDetails();
   }, []);
 
   return (
