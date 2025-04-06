@@ -1,12 +1,64 @@
-# React + Vite
+# Bookstore Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a full-stack bookstore application built with a React frontend and an Express backend. The application allows users to browse books, add them to a cart, and complete purchases. Admin users can manage books and view sales.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend**: Built with **React**, **Redux**, and **TailwindCSS**.
 
-## Expanding the ESLint configuration
+## Pages
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+#### Accessable to all
+1. `/` - Home Page
+2. `/page/:page` - Access to pagination
+3. `/login` - Login page
+4. `/register` - Register page
+5. `/cart` - Cart page
+
+#### Login Required
+5. `/orders` - Orders page
+6. `/checkout` - Cart checkout page
+
+#### Admin role required
+7. `/admin` - Admin page (Shows book you listed)
+8. `/admin/sales` - Sales page (Shows orders of your books, Status can be updated from here)
+9. `/admin/book/new` - List new book
+10. `/admin/book/edit/:slug` - Edit an exiting book based on slug ( if the book with slug does not exist redirects to `/admin/book/new`)
+
+
+### Dependencies
+```yaml
+@reduxjs/toolkit
+@tailwindcss/vite
+react
+react-dom
+react-redux
+react-router-dom
+tailwindcss
+```
+
+### Setup
+
+1.Make sure you are in the frontend directory:
+  ```bash
+  backend/frontend/bookstoreui
+  ```
+
+2. Install dependencies:
+  ```bash
+  npm install
+  ```
+3. Create a .env file in the frontend/bookstoreui directory with the following variable:
+  ```env
+  VITE_BACKEND_URL=http://localhost:5000
+  ```
+
+4. Start the development server:
+  ```bash
+  npm run dev
+  ```
+5. Open the application in your browser at:
+http://localhost:5173
+
+---
+Live (Deployed on Vercel): https://bookhivestore.vercel.app 

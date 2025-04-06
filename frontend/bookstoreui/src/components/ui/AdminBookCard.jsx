@@ -24,7 +24,7 @@ function AdminBookCard({ book = null, refresh }) {
   }
 
   return (
-    <div className="bg-amber-200 rounded-md border-2 border-black/50 px-2 py-1 sm:px-4 sm:py-2 flex flex-col">
+    <div className="bg-amber-200 rounded-md border-2 border-black/50 p-2 sm:px-4 sm:py-2 flex flex-col">
       <div className="aspect-video w-full object-contain bg-white rounded-md border-2 border-amber-500">
         <img className="aspect-video object-contain w-full" src={book.image} alt="" />
       </div>
