@@ -1,16 +1,13 @@
 import { useDispatch } from "react-redux";
 import { removeItem, updateItemQuantity } from "../../store/slices/cartSlices";
-import { BACKEND_URL } from "../../assets/options";
 import { removeFullItem, updateFullItemQuantity } from "../../store/slices/fullCartSlices";
+import useFetch from "../../hooks/useFetch";
 
 function CartCard({ book = null }) {
 
   const dispatch = useDispatch();
 
-  if (!book) {
-    console.error("Please pass a reference to the book to render!");
-    return;
-  }
+  const { loading, error, get } = useFetch();
 
   const removeFromCart = () => {
     dispatch(removeFullItem(book.slug));
@@ -32,22 +29,19 @@ function CartCard({ book = null }) {
   }
 
   const checkStock = () => {
-    async function check() {
-      const response = await fetch(`${BACKEND_URL}/api/book/get/${book.slug}`, {
-        method: 'GET',
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
+    const checkBookStock = async () => {
+      try {
+        const data = await get(`book/get/${book.slug}`);
+        if (data.book.stock > book.quantity) alert(`Book is in stock! ( ${data.book.stock} left )`);
+        else alert(`Book out of stock! ( ${data.book.stock} left )`);
+      } catch (err) {
+        console.error(err);
+        console.error(error);
         alert("Error, Could not check stock status.");
-        return;
       }
-      if (data.book.stock > book.quantity) alert(`Book is in stock! (${data.book.stock} left)`);
-      else alert(`Book out of stock! (${data.book.stock} left)`);
     }
 
-    check();
+    checkBookStock();
   }
 
   return (
@@ -58,7 +52,12 @@ function CartCard({ book = null }) {
       <div className="flex flex-col justify-between p-2">
         <div className="text-sm flex justify-between">
           <p>{book.genre}</p>
-          <button className="bg-white text-xs rounded-md font-medium px-2 py-1" onClick={checkStock}>Check stock</button>
+          <button className="bg-white text-xs rounded-md font-medium px-2 py-1 disabled:bg-black disabled:text-white cursor-pointer disabled:cursor-auto"
+            disabled={loading}
+            onClick={checkStock}
+          >
+            {loading ? "Checking...." : "Check stock"}
+          </button>
         </div>
         <p className="font-bold text-md sm:text-xl">{book.title}</p>
       </div>

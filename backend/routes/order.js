@@ -45,6 +45,7 @@ router.put('/update', validateIsAdmin, async (req, res) => {
 
   try {
     await updateOrderStatus(item);
+    return res.status(200).json({ message: "Order status updated successfully!" });
   } catch (err) {
     console.error("Some error occured while order status update: ", err);
     return res.status(500).json({ message: "Failed to update order status, Internal server error" });

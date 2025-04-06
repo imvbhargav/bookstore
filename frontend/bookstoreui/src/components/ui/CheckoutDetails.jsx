@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { selectCartItems, selectCartTotalItems, setCart } from "../../store/slices/cartSlices";
 import { selectFullCartTotalPrice, setFullCart } from "../../store/slices/fullCartSlices";
-import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../../assets/options";
+import { useEffect } from "react";
+import useFetch from "../../hooks/useFetch";
 
 function CheckoutDetails() {
 
@@ -12,41 +12,37 @@ function CheckoutDetails() {
   const totalItems = useSelector(selectCartTotalItems);
   const totalItemsPrice = useSelector(selectFullCartTotalPrice);
 
-  const [ loading, setLoading ] = useState(false);
+  const { loading, error, post } = useFetch()
 
   useEffect(() => {
 
     const items = cartItems.map(item => item.slug);
 
     const getFullCartDetails = async () => {
-      setLoading(true);
-      const response = await fetch(`${BACKEND_URL}/api/book/cart`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          items,
-        })
-      });
+      try {
+        const data = await post('book/cart', { items }, true);
 
-      const data = await response.json();
-      if (!response.ok) {
-        console.error(data.message);
-        setLoading(false);
-        return;
+        // Add the quantity stored in localStorage back
+        // to the freshly fetched ( possibly updated ) books.
+        const cartMap = new Map(cartItems.map(item => [item.slug, item.quantity]));
+        const merged = data.books.filter(book => cartMap.has(book.slug))
+        .map(book => ({
+          ...book,
+          quantity: cartMap.get(book.slug)
+        }));
+
+        // If some books details were not fetched ( possibly deleted ) remove from
+        // local state which removes the valus from localStorage.
+        const bookMap = new Map(data.books.map(book => [book.slug, book]));
+        const cartItemsFiltered = cartItems.filter(item => bookMap.has(item.slug));
+
+        // Dispatch the state changes.
+        dispatch(setCart(cartItemsFiltered));
+        dispatch(setFullCart(merged));
+      } catch (err) {
+        console.error(error);
+        console.error(err);
       }
-      const cartMap = new Map(cartItems.map(item => [item.slug, item.quantity]));
-      const merged = data.books.filter(book => cartMap.has(book.slug))
-      .map(book => ({
-        ...book,
-        quantity: cartMap.get(book.slug)
-      }));
-      const cartItemsFiltered = cartItems.filter(item => cartMap.has(item.slug));
-      dispatch(setCart(cartItemsFiltered));
-      dispatch(setFullCart(merged));
-      setLoading(false);
     }
 
     getFullCartDetails();

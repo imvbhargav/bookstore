@@ -41,6 +41,7 @@ const cartSlice = createSlice({
     setCart: (state, action) => {
       const items = action.payload;
       state.items = items;
+      addCartItemsToStorage(state);
     },
     addItem: (state, action) => {
       const { slug } = action.payload;

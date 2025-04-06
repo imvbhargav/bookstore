@@ -1,24 +1,20 @@
 import { Link } from "react-router-dom";
-import { BACKEND_URL } from "../../assets/options";
+import useFetch from "../../hooks/useFetch";
 
 function AdminBookCard({ book = null, refresh }) {
 
-  if (!book) {
-    console.error("Please pass a reference to the book to render!");
-    return;
-  }
+  const { loading, error, del } = useFetch();
 
   function deleteBook() {
-    async function deleteBySlug() {
-      const response = await fetch(`${BACKEND_URL}/api/book/${book.slug}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-      if (!response.ok) console.error(data.message);
-      else alert(data.message);
-      refresh();
+    const deleteBySlug = async () => {
+      try {
+        const data = await del(`book/${book.slug}`);
+        alert(data.message);
+        refresh();
+      } catch (err) {
+        console.error(err);
+        console.error(error);
+      }
     }
 
     const result = confirm(`Are you sure you want to delete book '${book.title}'?`);
@@ -51,9 +47,10 @@ function AdminBookCard({ book = null, refresh }) {
             className="my-4 bg-blue-500 px-2 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-blue-600 cursor-pointer text-white font-bold text-center transition-colors flex-1"
             >Edit</Link>
           <button
-            className="my-4 bg-red-500 px-2 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-red-600 cursor-pointer text-white font-bold transition-colors flex-1"
+            className="my-4 bg-red-500 px-2 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-red-600 cursor-pointer text-white font-bold transition-colors flex-1 disabled:bg-black disabled:cursor-auto"
+            disabled={loading}
             onClick={deleteBook}
-            >Delete</button>
+            >{loading ? "Deleting.." : "Delete"}</button>
         </div>
       </div>
     </div>

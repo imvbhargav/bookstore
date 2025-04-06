@@ -5,7 +5,7 @@ import { validEmail } from '../utils/validator';
 import { useDispatch } from "react-redux";
 import { login } from "../store/slices/userSlice";
 import { refreshCart } from '../store/slices/cartSlices';
-import { BACKEND_URL } from '../assets/options';
+import useFetch from '../hooks/useFetch';
 
 function Login() {
 
@@ -13,8 +13,9 @@ function Login() {
   const dispatch = useDispatch();
 
   const [ user, setUser ] = useState({email: '', password: ''});
-  const [ error, setError ] = useState('');
-  const [ loading, setLoading ] = useState(false);
+  const [ errorLocal, setErrorLocal ] = useState('');
+
+  const { loading, error, post } = useFetch();
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -25,43 +26,31 @@ function Login() {
 
     // Validate password.
     if (user.password.length < 8) {
-      setError("Password is at least 8 characters!");
+      setErrorLocal("Password is at least 8 characters!");
       return;
     }
 
     // Validate email entered.
     if (!validEmail(user.email)) {
-      setError("Enter valid E-mail address!");
+      setErrorLocal("Enter valid E-mail address!");
       return;
     }
 
-    async function loginUser() {
-      setLoading(true);
+    const userLogin = async () => {
       const { email, password } = user;
-      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email, password
-        })
-      });
-
-      if (!response.ok) {
-        setLoading(false);
-        setError("Invalid credentials!");
-        return;
-      };
-      const data = await response.json();
-      dispatch(login({isAdmin: data.isAdmin, email: data.email}));
-      dispatch(refreshCart());
-      setLoading(false);
-      navigate("/");
+      try {
+        const data = await post('auth/login', { email, password }, true);
+        dispatch(login({ isAdmin: data.isAdmin, email: data.email }));
+        dispatch(refreshCart());
+        navigate("/");
+      } catch (err) {
+        console.error(err);
+        console.error(error);
+        setErrorLocal(err.message);
+      }
     }
 
-    loginUser();
+    userLogin();
   }
 
   useEffect(() => {
@@ -114,7 +103,7 @@ function Login() {
               onChange={handleInputChange}
             />
           </div>
-          <p className="text-sm text-center text-red-500 min-h-6">{error}</p>
+          <p className="text-sm text-center text-red-500 min-h-6">{errorLocal}</p>
           <button
             className="py-2 px-4 bg-green-600 rounded-md font-bold text-white hover:bg-green-800 transition-colors cursor-pointer disabled:bg-black disabled:cursor-auto"
             disabled={loading}

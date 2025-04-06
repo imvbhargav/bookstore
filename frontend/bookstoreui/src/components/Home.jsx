@@ -2,10 +2,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import BookCard from "./ui/BookCard";
 import Header from "./ui/Header";
 import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../assets/options";
 import Spinner from "./ui/Spinner";
-
-const LIMIT_PER_PAGE = 12;
+import useFetch from "../hooks/useFetch";
+import { LIMIT_PER_PAGE } from "../assets/options";
 
 function Home() {
 
@@ -15,28 +14,27 @@ function Home() {
   const [ page, setPage ] = useState();
   const [ count, setCount ] = useState();
   const [ books, setBooks ] = useState(null);
-  const [ loading, setLoading ] = useState(false);
+
+  const { loading, error, get } = useFetch();
 
   useEffect(() => {
-    async function getBooks() {
-      setLoading(true);
-      const offset = (page - 1) * LIMIT_PER_PAGE;
-      const response = await fetch(`${BACKEND_URL}/api/book/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        console.error(data.message)
-        return;
-      };
-      setBooks(data.books);
-      setCount(data.count);
-      setLoading(false);
+    const fetchData = async () => {
+      try {
+        const offset = (page - 1) * LIMIT_PER_PAGE;
+        const data = await get(`book/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`);
+        setBooks(data.books);
+        setCount(data,count);
+      } catch (err) {
+        console.error(err);
+        console.error(error);
+      }
     }
 
-    if (!isNaN(parseInt(page))) getBooks();
+    if (!isNaN(parseInt(page))) {
+      fetchData();
+    } else {
+      navigate('/');
+    }
   }, [page]);
 
   useEffect(() => {

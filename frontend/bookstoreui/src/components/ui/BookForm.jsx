@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { BACKEND_URL } from '../../assets/options';
+import useFetch from '../../hooks/useFetch';
 
 function BookForm() {
 
@@ -13,7 +13,8 @@ function BookForm() {
   const [ bookSlug, setBookSlug ] = useState(null);
   const [ image, setImage ] = useState(null);
   const [ imagePreviewUrl, setImagePreviewUrl ] = useState(null);
-  const [ loading, setLoading ] = useState(false);
+
+  const { loading, error, get, post } = useFetch();
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -29,7 +30,6 @@ function BookForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setLoading(true);
 
     function validBookDetails() {
       const { title, author, genre, description, price, stock } = book;
@@ -51,17 +51,15 @@ function BookForm() {
         formData.append("slug", bookSlug);
       }
 
-      const response = await fetch(`${BACKEND_URL}/api/book/add`, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
-
-      if (!response.ok) return;
-      const data = await response.json();
-      alert(data.message);
-      setLoading(false);
-      navigate('/admin');
+      try {
+        const data = await post('book/add', formData, false);
+        alert(data.message);
+        navigate('/admin');
+      } catch (err) {
+        alert(err.message);
+        console.error(err);
+        console.error(error);
+      }
     }
 
     if (book && validBookDetails()) {
@@ -83,28 +81,21 @@ function BookForm() {
   }
 
   useEffect(() => {
-
-    const getBook = async () => {
-      setLoading(true);
-      const response = await fetch(`${BACKEND_URL}/api/book/get/${slug}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        navigate('/admin/book/new');
-        alert(data.message);
-      } else {
+    const getBookDetails = async () => {
+      try {
+        const data = await get(`book/get/${slug}`);
         const { image, slug: bookslug, ...book } = data.book;
         setImagePreviewUrl(image);
         setBookSlug(bookslug);
         setBook(book);
-      };
-      setLoading(false);
+      } catch (err) {
+        console.error(err);
+        console.error(error);
+        navigate('/admin/book/new');
+      }
     }
 
-    if (slug) getBook();
+    if (slug) getBookDetails();
   }, []);
 
   const inputStyle = "border-2 border-black/50 rounded-md px-2 py-1 sm:px-4 sm:py-2";

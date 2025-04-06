@@ -67,7 +67,6 @@ router.post("/logout", (req, res) => {
 // PROTECTED ROUTE
 router.get("/me", (req, res) => {
   const token = req.cookies.token;
-  console.log("Checking if token received: ", token);
   if (!token) return res.status(401).json({ message: "Unauthorized" });
 
   try {

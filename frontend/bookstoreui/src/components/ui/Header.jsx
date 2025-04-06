@@ -3,8 +3,7 @@ import Logo from '../../assets/logo.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/userSlice';
 import { refreshCart } from '../../store/slices/cartSlices';
-import { BACKEND_URL } from '../../assets/options';
-import { useState } from 'react';
+import useFetch from '../../hooks/useFetch';
 
 function Header() {
 
@@ -13,24 +12,18 @@ function Header() {
   const dispatch = useDispatch();
   const { isLoggedIn, isAdmin } = useSelector(state => state.user);
 
-  const [ loading, setLoading ] = useState(false);
+  const { loading, error, post } = useFetch();
 
   const logoutUser = async () => {
-    setLoading(true);
-    const response = await fetch(`${BACKEND_URL}/api/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
-
-    if (!response.ok) return;
-    const data = await response.json();
-    alert(data.message);
-    setLoading(false);
-    dispatch(logout());
-    dispatch(refreshCart());
+    try {
+      const data = await post('auth/logout', null, true);
+      alert(data.message);
+      dispatch(logout());
+      dispatch(refreshCart());
+    } catch (err) {
+      console.error(err);
+      console.error(error);
+    }
   }
 
   return (

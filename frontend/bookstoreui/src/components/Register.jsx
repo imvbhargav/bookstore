@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Logo from '../assets/logo.png'
 import { Link, useNavigate } from "react-router-dom";
 import { validEmail } from '../utils/validator';
-import { BACKEND_URL } from '../assets/options';
+import useFetch from '../hooks/useFetch';
 
 function Register() {
 
@@ -11,8 +11,9 @@ function Register() {
   const [ user, setUser ] = useState({email: '', password: ''});
   const [ isAdmin, setIsAdmin ] = useState(false);
   const [ repeat, setRepeat ] = useState('');
-  const [ error, setError ] = useState('');
-  const [ loading, setLoading ] = useState(false);
+  const [ errorLocal, setErrorLocal ] = useState('');
+
+  const { loading, error, post } = useFetch();
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -33,44 +34,37 @@ function Register() {
 
       // Validate all values entered.
       if (user.password < 8) {
-        setError("Password must be at least 8 characters!");
+        setErrorLocal("Password must be at least 8 characters!");
         return false;
       };
 
       // Validate password and repeat password.
       if (user.password !== repeat) {
-        setError("Password does not match!");
+        setErrorLocal("Password does not match!");
         return false;
       };
 
       // Validate email address entered
       const isValidMail = validEmail(user.email);
-      if (!isValidMail) setError("Enter valid E-mail address!");
+      if (!isValidMail) setErrorLocal("Enter valid E-mail address!");
       return isValidMail;
     }
 
-    async function createUser() {
-      setLoading(true);
-      const {email, password} = user;
-      const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email, password, isAdmin
-        })
-      });
-
-      const data = await response.json();
-      alert(data.message);
-      setLoading(false);
-      navigate("/login");
+    const registerUser = async () => {
+      try {
+        const {email, password} = user;
+        const data = await post('auth/register', { email, password, isAdmin }, true);
+        alert(data.message);
+        navigate("/login");
+      } catch (err) {
+        console.error(err);
+        console.error(error);
+        setErrorLocal(err.message);
+      }
     }
 
     if (validCredentials()) {
-      createUser();
+      registerUser();
     }
   }
 
@@ -146,7 +140,7 @@ function Register() {
             />
             <label htmlFor='admin'>Want to be a seller?</label>
           </div>
-          <p className="text-sm text-center text-red-500 min-h-6">{error}</p>
+          <p className="text-sm text-center text-red-500 min-h-6">{errorLocal}</p>
           <button
             className="py-2 px-4 bg-green-600 rounded-md font-bold text-white hover:bg-green-800 transition-colors cursor-pointer disabled:bg-black disabled:cursor-auto"
             disabled={loading}

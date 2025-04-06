@@ -2,8 +2,8 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { login, logout } from '../../store/slices/userSlice';
-import { BACKEND_URL } from '../../assets/options';
 import Loader from '../ui/Loader';
+import useFetch from '../../hooks/useFetch';
 
 const AuthProvider = ({ children }) => {
 
@@ -11,26 +11,24 @@ const AuthProvider = ({ children }) => {
   const location = useLocation();
   const [authChecked, setAuthChecked] = useState(false);
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      setAuthChecked(false);
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/auth/me`, {
-          method: 'GET',
-          credentials: 'include',
-        });
+  const { error, get } = useFetch();
 
-        if (!res.ok) throw new Error('Not authenticated');
-        const { email, isAdmin } = await res.json();
+  useEffect(() => {
+    const validateLogin = async () => {
+      try {
+        const data = await get('auth/me');
+        const { email, isAdmin } = data;
         dispatch(login({ isAdmin, email }));
       } catch (err) {
+        console.error(err);
+        console.error(error);
         dispatch(logout());
       } finally {
         setAuthChecked(true);
       }
-    };
+    }
 
-    checkLogin();
+    validateLogin();
   }, [location.pathname]);
 
   if (!authChecked) return <Loader />;

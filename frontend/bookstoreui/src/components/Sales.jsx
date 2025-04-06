@@ -1,30 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
 import Header from './ui/Header';
 import SaleCard from "./ui/SaleCard";
-import { BACKEND_URL } from "../assets/options";
 import Spinner from "./ui/Spinner";
+import useFetch from '../hooks/useFetch';
 
 function Sales() {
 
   const [ sales, setSales ] = useState([]);
-  const [ loading, setLoading ] = useState(false);
   const [ totalAmount, setTotalAmount ] = useState(0);
+  const [ noload, setNoload ] = useState(true);
+
+  const { loading, error, get, put } = useFetch();
 
   useEffect(() => {
-    async function fetchSales() {
-      setLoading(true);
-      const response = await fetch(`${BACKEND_URL}/api/order/get/sales`, {
-        method: 'GET',
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        console.error(data.message);
-        return;
+    const fetchSales = async () => {
+      try {
+        setNoload(false);
+        const data = await get('order/get/sales');
+        setSales(data.sales);
+      } catch (err) {
+        console.error(err);
+        console.error(error);
+      } finally {
+        setNoload(true);
       }
-      setSales(data.sales);
-      setLoading(false);
     }
 
     fetchSales();
@@ -39,31 +38,18 @@ function Sales() {
   }, [sales]);
 
   const updateStatus = useCallback((value, saleId, slug) => {
-
-    const updateDBStatus = async() => {
+    const updateOrderStatus = async () => {
       const currentSales = sales;
-
-      const response = await fetch(`${BACKEND_URL}/api/order/update`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          saleId,
-          slug,
-          status: value
-        })
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        console.error(data.message);
+      try {
+        await put('order/update', { saleId, slug, status: value });
+      } catch (err) {
+        console.error(err);
+        console.error(error);
         setSales(currentSales);
       }
     }
 
-    updateDBStatus();
+    updateOrderStatus();
     setSales(sales.map(sale =>
       (sale._id === saleId && sale.book.slug === slug)
         ? { ...sale, status: value }
@@ -78,39 +64,39 @@ function Sales() {
         <div className="flex justify-between items-center px-4 py-2 font-bold">
           <h1 className="text-md sm:text-2xl">Your Sales</h1>
         </div>
-        { !loading
-        ?
-        <>
-          <div className="p-2 m-2 bg-amber-200 rounded-xl border-2 border-black">
-            <div className="font-medium flex justify-between sm:gap-24 sm:justify-center">
-              <div className="text-center">
-                <p className="text-sm">Total sales</p>
-                <p className="bg-black font-black text-blue-500 px-4 py-2 rounded-md">{sales.length}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-sm">Total sales value</p>
-                <p className="bg-black font-black text-green-500 px-4 py-2 rounded-md">
-                  &#8377; {totalAmount}
-                </p>
+        { (loading && !noload)
+          ?
+          <div className="font-bold text-xl text-center mt-6 flex flex-col items-center justify-between">
+            <Spinner />
+            <h1 className="mt-6">Loading Sales...</h1>
+          </div>
+          :
+          <>
+            <div className="p-2 m-2 bg-amber-200 rounded-xl border-2 border-black">
+              <div className="font-medium flex justify-between sm:gap-24 sm:justify-center">
+                <div className="text-center">
+                  <p className="text-sm">Total sales</p>
+                  <p className="bg-black font-black text-blue-500 px-4 py-2 rounded-md">{sales.length}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm">Total sales value</p>
+                  <p className="bg-black font-black text-green-500 px-4 py-2 rounded-md">
+                    &#8377; {totalAmount}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-          { sales.map(sale => (
-            <SaleCard
-              key={`${sale._id}${sale.book.slug}`}
-              sale={sale}
-              updateStatus={updateStatus}
-            />
-          ))}
-          </div>
-        </>
-        :
-        <div className="font-bold text-xl text-center mt-6 flex flex-col items-center justify-between">
-          <Spinner />
-          <h1 className="mt-6">Loading Sales...</h1>
-        </div>
-      }
+            <div className="px-2 py-1 sm:px-4 sm:py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            { sales.map(sale => (
+              <SaleCard
+                key={`${sale._id}${sale.book.slug}`}
+                sale={sale}
+                updateStatus={updateStatus}
+              />
+            ))}
+            </div>
+          </>
+        }
       </main>
     </>
   );

@@ -92,9 +92,10 @@ router.delete('/:slug', async (req, res) => {
   const slug = req.params.slug;
   try {
     await deleteBook(slug);
-    return res.status(204).json({ book, message: `Book ${slug} deleted!` });
+    return res.status(200).json({ message: `Book ${slug} deleted!` });
   } catch (err) {
-    return res.status(500).json({error: err.message});
+    console.error(err);
+    return res.status(500).json({ error: err.message });
   }
 })
 
@@ -103,7 +104,7 @@ router.post('/cart', validateLogin, async (req, res) => {
 
   try {
     const books = await getManyBooksBySlug(items);
-    return res.status(200).json({ books, message: 'Books fetched deleted!' });
+    return res.status(200).json({ books, message: 'Books fetched!' });
   } catch (err) {
     return res.status(500).json({error: err.message});
   }

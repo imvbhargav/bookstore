@@ -3,15 +3,17 @@ import UserInput from "./UserInput";
 import CheckoutDetails from "./CheckoutDetails";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
-import { selectCartItems, selectCartTotalItems } from "../../store/slices/cartSlices";
-import { BACKEND_URL } from "../../assets/options";
-import { selectFullCartTotalPrice } from "../../store/slices/fullCartSlices";
+import { selectCartTotalItems } from "../../store/slices/cartSlices";
+import { selectFullCartItems, selectFullCartTotalPrice } from "../../store/slices/fullCartSlices";
+import useFetch from "../../hooks/useFetch";
 
 function CheckoutForm({ failure, checkoutSuccess, paymentProcessing, handleFailure }) {
 
-  const cartItems = useSelector(selectCartItems);
+  const cartItems = useSelector(selectFullCartItems);
   const totalItems = useSelector(selectCartTotalItems);
   const totalItemsPrice = useSelector(selectFullCartTotalPrice);
+
+  const { error, post } = useFetch();
 
   const [ allowSubmit, setAllowSubmit ] = useState(false);
   const [ cardDetails, setCardDetails ] = useState({cardno: '', cvv: '', expiry: ''});
@@ -63,33 +65,34 @@ function CheckoutForm({ failure, checkoutSuccess, paymentProcessing, handleFailu
       items.push(newItem);
     });
 
-    async function submitDetails() {
-      const response = await fetch(`${BACKEND_URL}/api/order/checkout`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({
+    const checkoutCart = async () => {
+      try {
+        const body = {
           ...cardDetails,
           ...deliveryDetails,
           items,
           total: totalItemsPrice
-        })
-      });
+        }
+        const data = await post('order/checkout', body, true);
+        handleFailure(false, data.message);
+        checkoutSuccess(totalItems, totalItemsPrice);
+      } catch (err) {
+        console.error(err);
+        console.error(error);
 
-      const data = await response.json();
-      if (!response.ok) {
+        // If failed check if status is 409 - Conflict
+        // to show the critical error if needed.
+        if (err.message === '409')
+          handleFailure(true, "Some / All books are out of stock", true);
+        else
+          handleFailure(true, err.message, false);
+
+      } finally {
         paymentProcessing(false);
-        console.error(data.message);
-        handleFailure(true, data.message, response.status !== 400);
-        return;
       }
-      handleFailure(false, data.message);
-      checkoutSuccess(totalItems, totalItemsPrice);
     }
 
-    submitDetails();
+    checkoutCart();
   }
 
   useEffect(() => {

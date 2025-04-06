@@ -2,33 +2,28 @@ import { useEffect, useState } from "react";
 import Header from "./ui/Header";
 import { Link } from "react-router-dom";
 import OrderCard from "./ui/OrderCard";
-import { BACKEND_URL } from "../assets/options";
 import Spinner from "./ui/Spinner";
+import useFetch from "../hooks/useFetch";
 
 function Orders() {
 
   const [ orders, setOrders ] = useState([]);
-  const [ loading, setLoading ] = useState(false);
   const [ totalAmount, setTotalAmount ] = useState(0);
 
-  useEffect(() => {
-    const getOrders = async getOrders => {
-      setLoading(true);
-      const response = await fetch(`${BACKEND_URL}/api/order/get`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+  const { loading, error, get } = useFetch()
 
-      const data = await response.json();
-      if (!response.ok) {
-        console.error(data.message);
-        return;
-      };
-      setOrders(data.orders);
-      setLoading(false);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const data = await get('order/get');
+        setOrders(data.orders);
+      } catch (err) {
+        console.error(err);
+        console.error(error);
+      }
     }
 
-    getOrders();
+    fetchOrders();
   }, [setOrders]);
 
   useEffect(() => {

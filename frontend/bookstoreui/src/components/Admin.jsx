@@ -1,38 +1,40 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AdminBookCard from "./ui/AdminBookCard";
 import Header from "./ui/Header";
 import { useCallback, useEffect, useState } from "react";
-import { BACKEND_URL, LIMIT_PER_PAGE } from "../assets/options";
-import Loader from "./ui/Loader";
 import Spinner from "./ui/Spinner";
+import useFetch from "../hooks/useFetch";
+import { LIMIT_PER_PAGE } from "../assets/options";
 
 function Admin() {
+
+  const navigate = useNavigate();
+
   const [ page, setPage ] = useState(1);
   const [ count, setCount ] = useState();
   const [ books, setBooks ] = useState(null);
-  const [ loading, setLoading ] = useState(false);
   const [ refreshCounter, setRefreshCounter ] = useState(0);
 
-  useEffect(() => {
-    async function getBooks() {
-      setLoading(true);
-      const offset = (page - 1) * LIMIT_PER_PAGE;
-      const response = await fetch(`${BACKEND_URL}/api/book/seller/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+  const { loading, error, get } = useFetch();
 
-      const data = await response.json();
-      if (!response.ok) {
-        console.error(data.message)
-        setLoading(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const offset = (page - 1) * LIMIT_PER_PAGE;
+        const data = await get(`book/seller/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`);
+        setBooks(data.books);
+        setCount(data,count);
+      } catch (err) {
+        console.error(err);
+        console.error(error);
       }
-      setBooks(data.books);
-      setCount(data.count);
-      setLoading(false);
     }
 
-    getBooks();
+    if (!isNaN(parseInt(page))) {
+      fetchData();
+    } else {
+      navigate('/');
+    }
   }, [refreshCounter, page]);
 
   const nextPage = () => {
