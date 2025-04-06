@@ -57,6 +57,7 @@ const cartSlice = createSlice({
     removeItem: (state, action) => {
       const bookSlugToRemove = action.payload;
       state.items = state.items.filter(item => item.slug !== bookSlugToRemove);
+      addCartItemsToStorage(state);
     },
     updateItemQuantity: (state, action) => {
       const { slug, type } = action.payload;
