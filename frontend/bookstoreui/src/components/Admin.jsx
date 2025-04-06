@@ -23,7 +23,7 @@ function Admin() {
         const offset = (page - 1) * LIMIT_PER_PAGE;
         const data = await get(`book/seller/get?limit=${LIMIT_PER_PAGE}&offset=${offset}`);
         setBooks(data.books);
-        setCount(data,count);
+        setCount(data.count);
       } catch (err) {
         console.error(err);
         console.error(error);
